@@ -180,7 +180,7 @@
             {
                 for (int i = 0; i < _library.Count; i++)
                 {
-                    if (_library[i].Autor == book.Autor)
+                    if (_library[i].Autor.ToLower() == book.Autor.ToLower())
                     {
                         BookInfo(_library[i]);
                     }
@@ -196,7 +196,7 @@
             {
                 for (int i = 0; i < _library.Count; i++)
                 {
-                    if (_library[i].Title == book.Title)
+                    if (_library[i].Title.ToLower() == book.Title.ToLower())
                     {
                         BookInfo(_library[i]);
                     }
@@ -212,7 +212,7 @@
             {
                 for (int i = 0; i < _library.Count; i++)
                 {
-                    if (_library[i].Genre == book.Genre)
+                    if (_library[i].Genre.ToLower() == book.Genre.ToLower())
                     {
                         BookInfo(_library[i]);
                     }
@@ -297,11 +297,11 @@
         {
             book = null;
             Console.Write("Введите автора: ");
-            string autor = Console.ReadLine();
+            string autor = Console.ReadLine().ToLower();
 
             for (int i = 0; i < _library.Count; i++)
             {
-                if (_library[i].Autor == autor)
+                if (_library[i].Autor.ToLower() == autor)
                 {
                     book = _library[i];
                     Console.WriteLine("Книга найдена");
@@ -317,11 +317,11 @@
         {
             book = null;
             Console.Write("Введите название книги: ");
-            string title = Console.ReadLine();
+            string title = Console.ReadLine().ToLower();
 
             for (int i = 0; i < _library.Count; i++)
             {
-                if (_library[i].Title == title)
+                if (_library[i].Title.ToLower() == title)
                 {
                     book = _library[i];
                     Console.WriteLine("Книга найдена");
@@ -337,11 +337,11 @@
         {
             book = null;
             Console.Write("Введите жанр: ");
-            string genre = Console.ReadLine();
+            string genre = Console.ReadLine().ToLower();
 
             for (int i = 0; i < _library.Count; i++)
             {
-                if (_library[i].Genre == genre)
+                if (_library[i].Genre.ToLower() == genre)
                 {
                     book = _library[i];
                     Console.WriteLine("Книга найдена");
