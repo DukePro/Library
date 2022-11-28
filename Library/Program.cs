@@ -22,15 +22,14 @@
         private const string MenuSearchByGenre = "4";
         private const string MenuSearchByYear = "5";
 
-        
-        Library library = new Library();
+        private Library _library = new Library();
 
         public void ShowMainMenu()
         {
             bool isExit = false;
             string userInput;
 
-            library.CreateSampleBooks();
+            _library.CreateSampleBooks();
 
             while (isExit == false)
             {
@@ -46,15 +45,15 @@
                 switch (userInput)
                 {
                     case MenuAddBook:
-                        library.AddBook();
+                        _library.AddBook();
                         break;
 
                     case MenuRemoveBook:
-                        library.DeleteBook();
+                        _library.DeleteBook();
                         break;
 
                     case MenuShowAllBooks:
-                        library.ShowAllRecords();
+                        _library.ShowAllRecords();
                         break;
 
                     case MenuFindBook:
@@ -89,23 +88,23 @@
                 switch (userInput)
                 {
                     case MenuSearchById:
-                        library.SearchById();
+                        _library.GetBookId(out book);
 
                         break;
                     case MenuSearchByAutor:
-                        library.SearchByAutor();
+                        _library.GetBookAutor(out book);
                         break;
 
                     case MenuSearchByTitle:
-                        library.SearchByTitle();
+                        _library.GetBookTitle(out book);
                         break;
 
                     case MenuSearchByGenre:
-                        library.SearchByGenre();
+                        _library.GetBookGenre(out book);
                         break;
 
                     case MenuSearchByYear:
-                        library.SearchByYear();
+                        _library.GetBookYear(out book);
                         break;
 
                     case MenuExit:
@@ -118,31 +117,33 @@
 
     class Library
     {
-        private const int Id = 1;
-        private const int Autor = 2;
-        private const int Title = 3;
-        private const int Genre = 4;
-        private const int Year = 5;
-
-        private List<string> _autors = new List<string>(new string[] { "Леонид Каганов", "Николай Глубокий", "Милослав Князев", "Денис Фонвизин", "Джером Клапка", "Фёдор Достоевский", "Джером Селинджер", "Александр Грибоедов" });
-        private List<string> _titles = new List<string>(new string[] { "Зомби в СССР", "Проктология для любознательных", "Танкист победитель драконов", "Водоросоль", "Трое в лодке, нищета и собаки", "Преступление на Казани", "Над пропастью не ржи", "Горе о туман" });
-        private List<string> _genres = new List<string>(new string[] { "Триллер", "Медицина", "Фентези", "Классика", "Классика", "Классика", "Мелодрама", "Поэзия" });
-        private List<int> _years = new List<int>(new int[] { 1999, 2006, 2010, 1950, 1950, 1950, 1999, 1950 });
+        public const int BookId = 1;
+        public const int Autor = 2;
+        public const int Title = 3;
+        public const int Genre = 4;
+        public const int Year = 5;
 
         private List<Book> _library = new List<Book>();
+
         private int _lastIndex;
 
         public void CreateSampleBooks()
         {
-            for (int i = 0; i < _autors.Count; i++)
+            List<string> autors = new List<string>(new string[] { "Леонид Каганов", "Николай Глубокий", "Милослав Князев", "Денис Фонвизин", "Джером Клапка", "Фёдор Достоевский", "Джером Селинджер", "Александр Грибоедов" });
+            List<string> titles = new List<string>(new string[] { "Зомби в СССР", "Проктология для любознательных", "Танкист победитель драконов", "Водоросоль", "Трое в лодке, нищета и собаки", "Преступление на Казани", "Над пропастью не ржи", "Горе о туман" });
+            List<string> genres = new List<string>(new string[] { "Триллер", "Медицина", "Фентези", "Классика", "Классика", "Классика", "Мелодрама", "Поэзия" });
+            List<int> years = new List<int>(new int[] { 1999, 2006, 2010, 1950, 1950, 1950, 1999, 1950 });
+
+            for (int i = 0; i < autors.Count; i++)
             {
-                _library.Add(new Book(++ _lastIndex, _autors[i], _titles[i], _genres[i], _years[i]));
+                _library.Add(new Book(++_lastIndex, autors[i], titles[i], genres[i], years[i]));
             }
         }
 
         public void AddBook()
         {
-            ++ _lastIndex;
+            ++_lastIndex;
+
             Console.Write("Введите автора: ");
             string autor = Console.ReadLine();
             Console.Write("Введите название книги: ");
@@ -158,124 +159,19 @@
 
         public void DeleteBook()
         {
-            if (_library.Remove(SearchById()))
+            Book book;
+
+            if (GetBookId(out book))
             {
+                _library.Remove(book);
                 Console.WriteLine("Книга удалена");
             }
         }
 
-        public Book SearchById()
-        {
-            Book book;
-            TryGetBook(out book, Id);
-            BookInfo(book);
-            return book;
-        }
-
-        public void SearchByAutor()
-        {
-            Book book;
-
-            if(TryGetBook(out book, Autor))
-            {
-                for (int i = 0; i < _library.Count; i++)
-                {
-                    if (_library[i].Autor.ToLower() == book.Autor.ToLower())
-                    {
-                        BookInfo(_library[i]);
-                    }
-                }
-            }
-        }
-
-        public void SearchByTitle()
-        {
-            Book book;
-
-            if (TryGetBook(out book, Title))
-            {
-                for (int i = 0; i < _library.Count; i++)
-                {
-                    if (_library[i].Title.ToLower() == book.Title.ToLower())
-                    {
-                        BookInfo(_library[i]);
-                    }
-                }
-            }
-        }
-
-        public void SearchByGenre()
-        {
-            Book book;
-
-            if (TryGetBook(out book, Genre))
-            {
-                for (int i = 0; i < _library.Count; i++)
-                {
-                    if (_library[i].Genre.ToLower() == book.Genre.ToLower())
-                    {
-                        BookInfo(_library[i]);
-                    }
-                }
-            }
-        }
-
-        public void SearchByYear()
-        {
-            Book book;
-
-            if (TryGetBook(out book, Year))
-            {
-                for (int i = 0; i < _library.Count; i++)
-                {
-                    if (_library[i].Year == book.Year)
-                    {
-                        BookInfo(_library[i]);
-                    }
-                }
-            }
-        }
-
-        private bool TryGetBook(out Book book, int searchId)
+        public bool GetBookId(out Book book)
         {
             book = null;
 
-            switch (searchId)
-            {
-                case Id:
-                    GetBookId(out book);
-                    break;
-
-                case Autor:
-                    GetBookAutor(out book);
-                    break;
-
-                case Title:
-                    GetBookTitle(out book);
-                    break;
-
-                case Genre:
-                    GetBookGenre(out book);
-                    break;
-
-                case Year:
-                    GetBookYear(out book);
-                    break;
-            }
-
-            if (book != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        private bool GetBookId(out Book book)
-        {
-            book = null;
             Console.WriteLine("Введите индекс книги:");
             int id = GetNumber();
 
@@ -284,7 +180,7 @@
                 if (_library[i].Index == id)
                 {
                     book = _library[i];
-                    Console.WriteLine("Книга найдена");
+                    ShowBookInfo(book);
                     return true;
                 }
             }
@@ -293,9 +189,12 @@
             return false;
         }
 
-        private bool GetBookAutor(out Book book)
+        public bool GetBookAutor(out Book book)
         {
             book = null;
+
+            bool isFound = false;
+
             Console.Write("Введите автора: ");
             string autor = Console.ReadLine().ToLower();
 
@@ -305,17 +204,28 @@
                 {
                     book = _library[i];
                     Console.WriteLine("Книга найдена");
-                    return true;
+                    ShowBookInfo(_library[i]);
+                    isFound = true;
                 }
             }
 
-            Console.WriteLine("Книг такого автора не найдено");
-            return false;
+            if (isFound == true)
+            {
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Книг такого автора не найдено");
+                return false;
+            }
         }
 
-        private bool GetBookTitle(out Book book)
+        public bool GetBookTitle(out Book book)
         {
             book = null;
+
+            bool isFound = false;
+
             Console.Write("Введите название книги: ");
             string title = Console.ReadLine().ToLower();
 
@@ -325,17 +235,28 @@
                 {
                     book = _library[i];
                     Console.WriteLine("Книга найдена");
-                    return true;
+                    ShowBookInfo(_library[i]);
+                    isFound = true;
                 }
             }
 
-            Console.WriteLine("Книги с таким названием не найдено");
-            return false;
+            if (isFound == true)
+            {
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Книги с таким названием не найдено");
+                return false;
+            }
         }
 
-        private bool GetBookGenre(out Book book)
+        public bool GetBookGenre(out Book book)
         {
             book = null;
+
+            bool isFound = false;
+
             Console.Write("Введите жанр: ");
             string genre = Console.ReadLine().ToLower();
 
@@ -344,18 +265,28 @@
                 if (_library[i].Genre.ToLower() == genre)
                 {
                     book = _library[i];
-                    Console.WriteLine("Книга найдена");
-                    return true;
+                    ShowBookInfo(_library[i]);
+                    isFound = true;
                 }
             }
 
-            Console.WriteLine("Книг такого жанра не найдено");
-            return false;
+            if (isFound == true)
+            {
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Книг такого жанра не найдено");
+                return false;
+            }
         }
 
-        private bool GetBookYear(out Book book)
+        public bool GetBookYear(out Book book)
         {
             book = null;
+
+            bool isFound = false;
+
             Console.WriteLine("Введите год:");
             int year = GetNumber();
 
@@ -364,18 +295,26 @@
                 if (_library[i].Year == year)
                 {
                     book = _library[i];
-                    Console.WriteLine("Книга найдена");
-                    return true;
+                    ShowBookInfo(_library[i]);
+                    isFound = true;
                 }
             }
 
-            Console.WriteLine("Книг такого года не найдено");
-            return false;
+            if (isFound == true)
+            {
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Книг такого года не найдено");
+                return false;
+            }
         }
 
         private int GetNumber()
         {
             int parsedNumber = 0;
+
             bool isParsed = false;
 
             while (isParsed == false)
@@ -396,9 +335,9 @@
         {
             if (_library.Count > 0)
             {
-                foreach (var book in _library)
+                foreach (Book book in _library)
                 {
-                    BookInfo(book);
+                    ShowBookInfo(book);
                 }
             }
             else
@@ -407,7 +346,7 @@
             }
         }
 
-        private void BookInfo(Book book)
+        private void ShowBookInfo(Book book)
         {
             if (book != null)
             {
